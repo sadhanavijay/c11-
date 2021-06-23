@@ -1,4 +1,3 @@
-
 var road;
 var runner;
 var invisible1,invisible2;
