@@ -3,34 +3,38 @@ var runner;
 var invisible1,invisible2;
 var bomb;
 var drink;
+var coin;
 var score = 0;
-var gameState = 'serve'
-var bombGroup
-var drinkGroup
+var gameState = 'serve';
+var bombGroup;
+var drinkGroup;
+var coinGroup;
 
 
-function preload(){
+function preload()
+{
   //pre-load images
   runner_1 = loadAnimation('Runner-1.png','Runner-2.png')
   path = loadImage('path.png')
   bomb_1 = loadImage('bomb.png')
   drink_1 = loadImage('energyDrink.png')
+  coin_1=loadImage('coin.png')
 
 }
 
-function setup(){
+function setup()
+{
   createCanvas(445,400);
   //create sprites here
 
   road = createSprite(200,200)
   road.addImage(path)
-  road.scale = 0.999;
-  path.velocityY=4;
+  road.scale = 1
 
   runner = createSprite(200,300,10,10);
   runner.addAnimation('runner',runner_1)
   
-  runner.scale = 0.1
+  runner.scale = 0.05
 
   invisible1 = createSprite(-20,0,140,800)
   invisible2 = createSprite(443,0,166,800)
@@ -39,85 +43,84 @@ function setup(){
 
   bombGroup = new Group()
   drinkGroup = new Group()
-
+  coinGroup = new Group()
 }
 
-
-function draw() {
+function draw() 
+{
   background(0);
 
   runner.setCollider('circle',0,0,555)
 
-  if (gameState==='serve'){
-  textSize(18);
-  fill('white');
-  text('Press',370,50);
+ 
+  if (gameState==='serve')
+  {
+    textSize(18);
+    fill('pink');
+    text('Press ',360,50);
 
-  textSize(18);
-  fill('white');
-  text('Space',370,100);
-  
-  textSize(18);
-  fill('white');
-  text('To',380,150);
+    textSize(18);
+    fill('pink');
+    text('space',360,70);
 
-  textSize(18);
-  fill('white');
-  text('Start',375,200);
+    textSize(18);
+    fill('pink');
+    text('to start',360,100);
+
+    textSize(18);
+    fill('pink');
+    text('Move with ',360,200);
+
+    textSize(18);
+    fill('pink');
+    text('the mouse',360,230);
+
+    textSize(18);
+    fill('pink');
+    text('to play',360,260);
+   
   }
+  
 
-  if (keyDown('space')&&gameState==='serve'){
+  if (keyDown('space')&&gameState==='serve')
+  {
     gameState='play'
   }
 
-  if (gameState==='play'){
+  if (gameState==='play')
+  {
     gameplay();
     textSize(18);
-    fill('white');
+    fill('pink');
     text('Score = '+score,355,200);
   }
+ 
 
-  if (keyDown('right')&&gameState==='play'){
-    runner.x=runner.x-50
-  }
-  if (keyDown('left'&&gameState==='play')){
-    runner.x=runner.x+50
-  }
-
-  if (gameState==='end'){
+  if (gameState==='end')
+  {
     runner.velocityx=0
     road.velocityY = 0
 
     textSize(18);
-    fill('white');
+    fill('pink');
     text('You Lost',355,100);
-    text('Press',360,210)
-    text('ctrl + r to',355,230)
-    text('restart',360,250)
-    text('Score is '+score,355,350)
-
+    text('Score is '+score,355,350) 
   }
 
-  if (gameState==='end'&&keyDown('r')){
-    gameState='play'
-  }
-  if (path.y>400){
-    path.y=height/2
-  }
-  
   drawSprites();
-
 }
 
-function spawnBomb(){
+function spawnBomb()
+{
 
   randx = Math.round(random(70,330))
   randy = Math.round(random(-100,-20))
 
-  if (frameCount%60===0 || frameCount%80===0){
+  if (frameCount%60===0 || frameCount%80===0)
+  {
     bomb = createSprite(randx,randy)
     bomb.addImage(bomb_1)
-    bomb.scale = 0.08
+    bomb.scale = 0.05
     bomb.velocityY = 9
     bomb.lifetime = 210
     bombGroup.add(bomb)
@@ -126,44 +129,68 @@ function spawnBomb(){
 }
 
 
-function spawnDrink(){
+function spawnDrink()
+{
   randx = Math.round(random(70,330))
   randy = Math.round(random(-100,-20))
 
-  if (frameCount%100===0){
+  if (frameCount%100===0)
+  {
     drink = createSprite(randx,randy)
     drink.addImage(drink_1)
-    drink.scale = 0.1
-    drink.velocityY = 9
+    drink.scale = 0.09
+    drink.velocityY = 4
     drink.lifetime = 210
     drinkGroup.add(drink)
 
   }
+  
 }
 
-function kill(){
-  if (bomb.collide(runner)){
+function spawnCoin()
+{
+    if (frameCount%100===0)
+  {
+    coin = createSprite(randx,randy)
+    coin.addImage(coin_1)
+    coin.scale = 0.25
+    coin.velocityY = 7
+    coin.scoreTime = 209
+    coinGroup.add(coin)
+  }
+}
+
+function kill()
+{
+  if (bomb.collide(runner))
+  {
 
   }
 }
 
-function gameplay(){
-
-  
-
+function gameplay()
+{
   road.velocityY = 5
-  if (road.y>400){
+  if (road.y>400)
+  {
     road.y = road.width/2
   }
 
-  if (runner.isTouching(bombGroup)){
+  if (runner.isTouching(bombGroup))
+  {
     gameState='end'
   }
 
-  if (runner.isTouching(drinkGroup)){
+  if (runner.isTouching(drinkGroup))
+  {
     drink.destroy()
-    score+=5
+    score+=2
+  }
 
+  if (runner.isTouching(coinGroup))
+  {
+    coin.destroy()
+    score+=5
   }
 
   runner.x = mouseX
@@ -172,7 +199,5 @@ function gameplay(){
 
   spawnBomb();
   spawnDrink();
-
-
-
+  spawnCoin();
 }
